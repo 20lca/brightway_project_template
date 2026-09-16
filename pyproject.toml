@@ -1,15 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "project-name"
 version = "0.1.0"
-description = "LCA model for PROJECTNAME"
+description = "Template project for Brightway LCA projects"
 readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
-    "pandas",
-    "openpyxl",
-    "jupyterlab",
-    "bw2data",
+    "bw2analyzer",
     "bw2calc",
+    "bw2data",
     "bw2io",
+    "ipykernel",
+    "jupyterlab",
+    "matplotlib",
+    "numpy",
+    "openpyxl",
+    "pandas",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["functions"]
