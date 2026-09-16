@@ -79,3 +79,35 @@ EXIOBASE_CSV_PATH = (
     / "data"
     / "exiobase_v3.3.16b2.CSV"
 )
+
+# BONSAI importer settings
+BONSAI_DATABASE_NAME = "BONSAI_V2.1.6"
+BONSAI_BIOSPHERE_NAME = "biosphere3"
+BONSAI_BIOSPHERE_DATABASE_NAME = f"{BONSAI_DATABASE_NAME} biosphere"
+
+BONSAI_PATH = (
+    ONEDRIVE_PATH
+    / "Databases"
+    / BONSAI_DATABASE_NAME
+)
+
+# iLUC and extra biosphere settings
+ILUC_BASE_PATH = (
+    ONEDRIVE_PATH
+    / "Databases"
+    / "iluc_brightway"
+)
+
+EXTRA_BIOSPHERE_FILE_NAME = "extra_biosphere.xlsx"
+ILUC_FILE_NAME = "iLUC_for_bw_ei312_conseq.xlsx"
+ILUC_SHEET_NAME = "BW inventory"
+
+EXTRA_BIOSPHERE_PATH = (
+    ILUC_BASE_PATH
+    / EXTRA_BIOSPHERE_FILE_NAME
+)
+
+ILUC_PATH = (
+    ILUC_BASE_PATH
+    / ILUC_FILE_NAME
+)
