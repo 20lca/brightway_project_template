@@ -1,12 +1,39 @@
 from pathlib import Path
 class Config:
 
+    # Brightway project name
+    PROJECT_NAME = "brightway_project" # define project name here
+    
+    # Project folder
+    PROJECT_FOLDER = "PROJECTNAME_PROJECTNUMBER"
+
+    # Company OneDrive
+    ONEDRIVE_PATH = Path.home() / "OneDrive - 2.-0 LCA Consultants ApS"
+
+    # Project directory
+    PROJECT_DIRECTORY_PATH = (
+        ONEDRIVE_PATH
+        / PROJECT_FOLDER
+        / "Model"
+    )
+
+    if not PROJECT_DIRECTORY_PATH.is_dir():
+        PROJECT_DIRECTORY_PATH = (
+            ONEDRIVE_PATH
+            / "Active Projects"
+            / PROJECT_FOLDER
+            / "Model"
+        )    
+
     # Brightway database names
     ECOINVENT_ALCA_NAME = "ecoinvent-3.12-cutoff"
     ECOINVENT_CLCA_NAME = "ecoinvent-3.12-consequential"
-    BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
-    BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
+    ECOINVENT_BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
+    ECOINVENT_BIOSPHERE_ALT_NAME = "biosphere3"
+    ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
     ECOINVENT_ILUC_NAME = "ecoinvent-3.12-iluc"
+    BAFU_DATABASE_NAME = "bafu"
+    BAFI_BIOSPHERE_NAME = "biosphere3"
 
     # Ecoinvent settings for web install
     ECOINVENT_USERNAME = "usernamehere" # input your username here
@@ -25,27 +52,19 @@ class Config:
         / "datasets"
     )
 
-
-    # Brightway project name
-    PROJECT_NAME = "brightway_project" # define project name here
-
-    # Company OneDrive
-    ONEDRIVE_PATH = Path.home() / "OneDrive - 2.-0 LCA Consultants ApS"
-
-    # Project folder
-    PROJECT_FOLDER = "PROJECTNAME_PROJECTNUMBER"
-
-    PROJECT_DIRECTORY_PATH = (
+    # BAFU importer settings
+    BAFU_ECOSPOLD_PATH = (
         ONEDRIVE_PATH
-        / PROJECT_FOLDER
-        / "Model"
+        / "Databases"
+        / "BAFU"
+        / "BAFU-2025 ecospold1"
+        / "BAFU-2025_LCI ecoSpold v1 (for other softwares)"
+        / "LCI ecoSpold v1 Files"
     )
 
-    if not PROJECT_DIRECTORY_PATH.is_dir():
-        PROJECT_DIRECTORY_PATH = (
-            ONEDRIVE_PATH
-            / "Active Projects"
-            / PROJECT_FOLDER
-            / "Model"
-        )
-
+    BAFU_MAPPING_FILE_PATH = (
+        ONEDRIVE_PATH
+        / "Databases"
+        / "BAFU"
+        / "elementary_flows_mapping.csv"
+    )
