@@ -69,16 +69,13 @@ class Config:
         / "elementary_flows_mapping.csv"
     )
 
-    # EXIOBASE importer settings
-    EXIOBASE_DATABASE_NAME = "exiobase3316b2"
-    EXIOBASE_BIOSPHERE_NAME = "biosphere3"
-    EXIOBASE_EXTRA_BIOSPHERE_NAME = "exiobase3316_extra_biosphere_b2"
+# EXIOBASE importer settings
+EXIOBASE_DATABASE_NAME = "exiobase3316b2"
+EXIOBASE_BIOSPHERE_NAME = "biosphere3"
+EXIOBASE_EXTRA_BIOSPHERE_NAME = "exiobase3316_extra_biosphere_b2"
 
-    EXIOBASE_CSV_FILE_NAME = "Exiobase_v3.3.16b2.CSV"
-
-    EXIOBASE_CSV_PATH = (
-        ONEDRIVE_PATH
-        / "Databases"
-        / "EXIOBASE_brightway"
-        / EXIOBASE_CSV_FILE_NAME
-    )
+EXIOBASE_CSV_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "exiobase_v3.3.16b2.CSV"
+)
