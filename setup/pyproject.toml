@@ -1,0 +1,15 @@
+[project]
+name = "project-name"
+version = "0.1.0"
+description = "LCA model for PROJECTNAME"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "pandas",
+    "openpyxl",
+    "jupyterlab",
+    "bw2data",
+    "bw2calc",
+    "bw2io",
+]
