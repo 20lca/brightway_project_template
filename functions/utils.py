@@ -2,7 +2,7 @@ from pathlib import Path
 class Config:
 
     # Brightway project name
-    PROJECT_NAME = "test_project" # define project name here
+    PROJECT_NAME = "project_name" # define project name here
 
     # Company OneDrive
     ONEDRIVE_PATH = Path.home() / "OneDrive - 2.-0 LCA Consultants ApS"
