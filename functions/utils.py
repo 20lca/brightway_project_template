@@ -33,12 +33,21 @@ class Config:
         / "datasets"
     )
 
+    ECOINVENT_BIOSPHERE_PATH = (
+        ONEDRIVE_PATH
+        / "Databases"
+        / "EcoinventSpold"
+        / ECOINVENT_ECOSPOLD_FOLDER_NAME
+        / "MasterData"
+        / "ElementaryExchanges.xml"
+    )
+
     # BAFU importer settings
     BAFU_ECOSPOLD_PATH = (
         ONEDRIVE_PATH
         / "Databases"
         / "BAFU"
-        / "BAFU-2026 ecospold1"
+        / "BAFU-2026 v1_ecoSpold v1"
         / "ecoSpold files"
     )
 
@@ -56,6 +65,7 @@ class Config:
 
     EXIOBASE_CSV_PATH = (
         ONEDRIVE_PATH
+        / "Databases"
         / "EXIOBASE_BW"
         / "exiobase_v3.3.16b2.CSV"
     )
@@ -96,8 +106,7 @@ class Config:
     ECOINVENT_ALCA_NAME = "ecoinvent-3.12-cutoff"
     ECOINVENT_CLCA_NAME = "ecoinvent-3.12-consequential"
     ECOINVENT_BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
-    ECOINVENT_BIOSPHERE_ALT_NAME = "biosphere3"
     ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
     ECOINVENT_ILUC_NAME = "ecoinvent-3.12-iluc"
-    BAFU_DATABASE_NAME = "bafu"
+    BAFU_DATABASE_NAME = "bafu-2026"
     BAFU_BIOSPHERE_NAME = "biosphere3"

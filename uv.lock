@@ -364,6 +364,25 @@ wheels = [
 ]
 
 [[package]]
+name = "bw-simapro-csv"
+version = "0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "bw2parameters" },
+    { name = "ftfy" },
+    { name = "loguru" },
+    { name = "multifunctional" },
+    { name = "platformdirs" },
+    { name = "pydantic" },
+    { name = "python-dateutil" },
+    { name = "stats-arrays" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/54/6a/bdeea4dd84cf287d8789000ea5b1515a206e7098c482129760ad521f8b4e/bw_simapro_csv-0.5.tar.gz", hash = "sha256:359f53ef4eccaec36a3c8fc02acec92b30d61a8b5ff60d758799720b4d920a9f", size = 39351, upload-time = "2026-09-01T07:06:24.416Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ba/a0/add5aea2ea81c82c61412a321ababeb21c16949a599d24f496c14e1a4542/bw_simapro_csv-0.5-py3-none-any.whl", hash = "sha256:5ba2c80ae41f0421742a33a56ba457d1e9c90a7e080559c9099b70e1d79a361c", size = 41574, upload-time = "2026-09-01T07:06:23.25Z" },
+]
+
+[[package]]
 name = "bw2analyzer"
 version = "0.11.8"
 source = { registry = "https://pypi.org/simple" }
@@ -467,6 +486,12 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/7b/99/01604f0b6c112e40c03f630a42d2476ef1ae44131bb11d6d334638ad3922/bw2io-0.9.17.tar.gz", hash = "sha256:1aa66ad9eada0baeee3a0b08a548e84ef79f41248d245deaa8a1ab6ca038a4e6", size = 27605289, upload-time = "2026-04-26T13:36:52.719Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/23/dc/f2bed6dbbf347e2ff37e44ec0e4b6443a79891c3c68a06b9f536e30884c0/bw2io-0.9.17-py3-none-any.whl", hash = "sha256:974588746b9019de3807d5269107b56ae73b723efdd5184cb9d737133c1ed7d3", size = 27643319, upload-time = "2026-04-26T13:36:48.762Z" },
+]
+
+[package.optional-dependencies]
+multifunctional = [
+    { name = "bw-simapro-csv" },
+    { name = "multifunctional" },
 ]
 
 [[package]]
@@ -1017,6 +1042,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/00/78/f34251dadb8f3921264a1d9b8946f5e542014ee2614b285261b4e40e6775/fsspec-2026.7.0.tar.gz", hash = "sha256:c803c40f4cf860b49dea58ee3e1c33cb9c790520e233537e1340049f89b82a88", size = 317040, upload-time = "2026-07-28T16:34:51.052Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fd/3c/6a2bf344106328fd04963664a60b9bb6496fc25df8e962fcdc1367285fb9/fsspec-2026.7.0-py3-none-any.whl", hash = "sha256:b57ddbafedfaef7018c1ecab32aa200a9d7ca26b77965f64e48b70061249d279", size = 206583, upload-time = "2026-07-28T16:34:49.538Z" },
+]
+
+[[package]]
+name = "ftfy"
+version = "6.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "wcwidth" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a5/d3/8650919bc3c7c6e90ee3fa7fd618bf373cbbe55dff043bd67353dbb20cd8/ftfy-6.3.1.tar.gz", hash = "sha256:9b3c3d90f84fb267fe64d375a07b7f8912d817cf86009ae134aa03e1819506ec", size = 308927, upload-time = "2024-10-26T00:50:35.149Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/6e/81d47999aebc1b155f81eca4477a616a70f238a2549848c38983f3c22a82/ftfy-6.3.1-py3-none-any.whl", hash = "sha256:7c70eb532015cd2f9adb53f101fb6c7945988d023a085d127d1573dc49dd0083", size = 44821, upload-time = "2024-10-26T00:50:33.425Z" },
 ]
 
 [[package]]
@@ -1863,6 +1900,23 @@ wheels = [
 ]
 
 [[package]]
+name = "multifunctional"
+version = "1.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "blinker" },
+    { name = "bw-processing" },
+    { name = "bw2data" },
+    { name = "bw2io" },
+    { name = "loguru" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/30/fc/5f83416adbb89c7a30afcf5b0126734e2b8881c238d07b92c062613d918e/multifunctional-1.1.1.tar.gz", hash = "sha256:94387838aaa6e24a29fe09292a74cc1f4218aabb129e10eef11b621ffd79a423", size = 28735, upload-time = "2025-06-26T02:33:24.785Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f6/2a/27f843eba77853119f73828395de23262363540f10edd1b319e0b17c76fd/multifunctional-1.1.1-py3-none-any.whl", hash = "sha256:5814f5c539fa6508a3433370bc06dc3519b300b691aee72ea9d2f73680e33929", size = 19930, upload-time = "2025-06-26T02:33:22.844Z" },
+]
+
+[[package]]
 name = "multivolumefile"
 version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2128,7 +2182,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
@@ -2238,7 +2292,7 @@ dependencies = [
     { name = "bw2analyzer" },
     { name = "bw2calc" },
     { name = "bw2data" },
-    { name = "bw2io" },
+    { name = "bw2io", extra = ["multifunctional"] },
     { name = "ecoinvent-interface" },
     { name = "ipykernel" },
     { name = "jupyterlab" },
@@ -2253,7 +2307,7 @@ requires-dist = [
     { name = "bw2analyzer" },
     { name = "bw2calc" },
     { name = "bw2data" },
-    { name = "bw2io" },
+    { name = "bw2io", extras = ["multifunctional"] },
     { name = "ecoinvent-interface", specifier = ">=3.1" },
     { name = "ipykernel" },
     { name = "jupyterlab" },
