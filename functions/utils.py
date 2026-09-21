@@ -2,10 +2,7 @@ from pathlib import Path
 class Config:
 
     # Brightway project name
-    PROJECT_NAME = "brightway_project" # define project name here
-    
-    # Project folder
-    PROJECT_FOLDER = "PROJECTNAME_PROJECTNUMBER"
+    PROJECT_NAME = "test_project" # define project name here
 
     # Company OneDrive
     ONEDRIVE_PATH = Path.home() / "OneDrive - 2.-0 LCA Consultants ApS"
@@ -13,31 +10,15 @@ class Config:
     # Project directory
     PROJECT_DIRECTORY_PATH = (
         ONEDRIVE_PATH
-        / PROJECT_FOLDER
-        / "Model"
+        / "Intranet - Internal Development Projects"
+        / "Brightway Open_MA"
+        / "data4workshops"
+        / "excel_model_example"
     )
 
-    if not PROJECT_DIRECTORY_PATH.is_dir():
-        PROJECT_DIRECTORY_PATH = (
-            ONEDRIVE_PATH
-            / "Active Projects"
-            / PROJECT_FOLDER
-            / "Model"
-        )    
-
-    # Brightway database names
-    ECOINVENT_ALCA_NAME = "ecoinvent-3.12-cutoff"
-    ECOINVENT_CLCA_NAME = "ecoinvent-3.12-consequential"
-    ECOINVENT_BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
-    ECOINVENT_BIOSPHERE_ALT_NAME = "biosphere3"
-    ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
-    ECOINVENT_ILUC_NAME = "ecoinvent-3.12-iluc"
-    BAFU_DATABASE_NAME = "bafu"
-    BAFI_BIOSPHERE_NAME = "biosphere3"
-
     # Ecoinvent settings for web install
-    ECOINVENT_USERNAME = "usernamehere" # input your username here
-    ECOINVENT_PASSWORD = "passwordhere" # input your password here
+    ECOINVENT_USERNAME = "tw20lca" # input your username here
+    ECOINVENT_PASSWORD = "20LCAcph" # input your password here
     ECOINVENT_VERSION = "3.12" # input your ecoinvent version here
     ECOINVENT_SYSTEM_MODEL = "consequential"  # input your system model here (can be cutoff / apos / consequential / EN15804)
 
@@ -57,9 +38,8 @@ class Config:
         ONEDRIVE_PATH
         / "Databases"
         / "BAFU"
-        / "BAFU-2025 ecospold1"
-        / "BAFU-2025_LCI ecoSpold v1 (for other softwares)"
-        / "LCI ecoSpold v1 Files"
+        / "BAFU-2026 ecospold1"
+        / "ecoSpold files"
     )
 
     BAFU_MAPPING_FILE_PATH = (
@@ -69,45 +49,55 @@ class Config:
         / "elementary_flows_mapping.csv"
     )
 
-# EXIOBASE importer settings
-EXIOBASE_DATABASE_NAME = "exiobase3316b2"
-EXIOBASE_BIOSPHERE_NAME = "biosphere3"
-EXIOBASE_EXTRA_BIOSPHERE_NAME = "exiobase3316_extra_biosphere_b2"
+    # EXIOBASE importer settings
+    EXIOBASE_DATABASE_NAME = "exiobase3316b2"
+    EXIOBASE_BIOSPHERE_NAME = "biosphere3"
+    EXIOBASE_EXTRA_BIOSPHERE_NAME = "exiobase3316_extra_biosphere_b2"
 
-EXIOBASE_CSV_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "data"
-    / "exiobase_v3.3.16b2.CSV"
-)
+    EXIOBASE_CSV_PATH = (
+        ONEDRIVE_PATH
+        / "EXIOBASE_BW"
+        / "exiobase_v3.3.16b2.CSV"
+    )
 
-# BONSAI importer settings
-BONSAI_DATABASE_NAME = "BONSAI_V2.1.6"
-BONSAI_BIOSPHERE_NAME = "biosphere3"
-BONSAI_BIOSPHERE_DATABASE_NAME = f"{BONSAI_DATABASE_NAME} biosphere"
+    # BONSAI importer settings
+    BONSAI_DATABASE_VERSION = "v2.4.1"
+    BONSAI_DATABASE_NAME = f"BONSAI {BONSAI_DATABASE_VERSION}"
+    BONSAI_BIOSPHERE_NAME = "biosphere3"
+    BONSAI_BIOSPHERE_DATABASE_NAME = f"{BONSAI_DATABASE_NAME} biosphere"
 
-BONSAI_PATH = (
-    ONEDRIVE_PATH
-    / "Databases"
-    / BONSAI_DATABASE_NAME
-)
+    BONSAI_PATH = (
+        ONEDRIVE_PATH
+        / "Databases"
+        / "BONSAI"
+        / BONSAI_DATABASE_VERSION
+    )
 
-# iLUC and extra biosphere settings
-ILUC_BASE_PATH = (
-    ONEDRIVE_PATH
-    / "Databases"
-    / "iluc_brightway"
-)
+    # iLUC and extra biosphere importer settings
+    EXTRA_BIOSPHERE_FILE_NAME = "extra_biosphere.xlsx"
+    ILUC_FILE_NAME = "iLUC_for_bw_ei312_conseq.xlsx"
+    ILUC_SHEET_NAME = "BW inventory"
 
-EXTRA_BIOSPHERE_FILE_NAME = "extra_biosphere.xlsx"
-ILUC_FILE_NAME = "iLUC_for_bw_ei312_conseq.xlsx"
-ILUC_SHEET_NAME = "BW inventory"
+    EXTRA_BIOSPHERE_PATH = (
+        ONEDRIVE_PATH
+        / "Databases"
+        / "iLUC_BW"
+        / EXTRA_BIOSPHERE_FILE_NAME
+    )
 
-EXTRA_BIOSPHERE_PATH = (
-    ILUC_BASE_PATH
-    / EXTRA_BIOSPHERE_FILE_NAME
-)
+    ILUC_PATH = (
+        ONEDRIVE_PATH
+        / "Databases"
+        / "iLUC_BW"
+        / ILUC_FILE_NAME
+    )
 
-ILUC_PATH = (
-    ILUC_BASE_PATH
-    / ILUC_FILE_NAME
-)
+    # Brightway database names
+    ECOINVENT_ALCA_NAME = "ecoinvent-3.12-cutoff"
+    ECOINVENT_CLCA_NAME = "ecoinvent-3.12-consequential"
+    ECOINVENT_BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
+    ECOINVENT_BIOSPHERE_ALT_NAME = "biosphere3"
+    ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
+    ECOINVENT_ILUC_NAME = "ecoinvent-3.12-iluc"
+    BAFU_DATABASE_NAME = "bafu"
+    BAFU_BIOSPHERE_NAME = "biosphere3"
