@@ -1,41 +1,30 @@
+import json
+from pathlib import Path
+
 import bw2data as bd
 
+from functions.utils import Config
 
-def define_b3_map() -> dict:
-    """Create the BONSAI-to-biosphere3 flow mapping required by BonsaiImporter."""
 
-    biosphere_db = bd.Database(bd.config.biosphere)
+def define_b3_map(bonsai_path: Path | None = None) -> dict[str, str]:
+    """Map BONSAI elementary-flow codes to the active Brightway biosphere.
 
-    co_fossil = biosphere_db.get(
-        name="Carbon monoxide, fossil",
-        categories=("air",),
-    )
-    co2_non_fossil = biosphere_db.get(
-        name="Carbon dioxide, non-fossil",
-        categories=("air",),
-    )
-    co2_fossil = biosphere_db.get(
-        name="Carbon dioxide, fossil",
-        categories=("air",),
-    )
-    ch4_fossil = biosphere_db.get(
-        name="Methane, fossil",
-        categories=("air",),
-    )
-    ch4_non_fossil = biosphere_db.get(
-        name="Methane, non-fossil",
-        categories=("air",),
-    )
-    n2o = biosphere_db.get(
-        name="Dinitrogen monoxide",
-        categories=("air",),
-    )
+    BONSAI metadata records the corresponding Brightway flow UUID in
+    ``source_id``. Only mappings whose target exists in the active biosphere
+    database are returned; the importer creates its supplementary biosphere
+    database for the remaining flows.
+    """
+
+    path = Path(bonsai_path or Config.BONSAI_PATH)
+    with (path / "io_metadata.json").open(encoding="utf-8") as metadata_file:
+        metadata = json.load(metadata_file)
+
+    biosphere_codes = {
+        flow["code"] for flow in bd.Database(bd.config.biosphere)
+    }
 
     return {
-        "Carbon_dioxide__fossil_Air": co2_fossil["code"],
-        "Carbon_dioxide__biogenic_Air": co2_non_fossil["code"],
-        "Methane__fossil_Air": ch4_fossil["code"],
-        "Methane__biogenic_Air": ch4_non_fossil["code"],
-        "Carbon_monoxide__fossil_Air": co2_non_fossil["code"],
-        "Dinitrogen_monoxide_Air": n2o["code"],
+        bonsai_code: flow_metadata["source_id"]
+        for bonsai_code, flow_metadata in metadata.items()
+        if flow_metadata.get("source_id") in biosphere_codes
     }

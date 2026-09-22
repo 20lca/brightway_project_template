@@ -81,6 +81,7 @@ class Config:
         / "Databases"
         / "BONSAI"
         / BONSAI_DATABASE_VERSION
+        / "brightway"
     )
 
     # iLUC and extra biosphere importer settings
@@ -106,7 +107,7 @@ class Config:
     ECOINVENT_ALCA_NAME = "ecoinvent-3.12-cutoff"
     ECOINVENT_CLCA_NAME = "ecoinvent-3.12-consequential"
     ECOINVENT_BIOSPHERE_NAME = "ecoinvent-3.12-biosphere"
-    ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere-extra"
+    ECOINVENT_BIOSPHERE_EXTRA_NAME = "ecoinvent-3.12-biosphere_extra"
     ECOINVENT_ILUC_NAME = "ecoinvent-3.12-iluc"
     BAFU_DATABASE_NAME = "bafu-2026"
     BAFU_BIOSPHERE_NAME = "biosphere3"

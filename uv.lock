@@ -458,7 +458,7 @@ wheels = [
 [[package]]
 name = "bw2io"
 version = "0.9.17"
-source = { registry = "https://pypi.org/simple" }
+source = { url = "https://github.com/mfastudillo/brightway2-io/archive/9f62977cf83ffa45453f410a3bdbc19f38b03811.tar.gz" }
 dependencies = [
     { name = "bw-migrations" },
     { name = "bw-processing" },
@@ -469,6 +469,7 @@ dependencies = [
     { name = "mrio-common-metadata" },
     { name = "numpy" },
     { name = "openpyxl" },
+    { name = "pint" },
     { name = "platformdirs" },
     { name = "pydantic" },
     { name = "pyecospold" },
@@ -483,16 +484,56 @@ dependencies = [
     { name = "xlrd" },
     { name = "xlsxwriter" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/99/01604f0b6c112e40c03f630a42d2476ef1ae44131bb11d6d334638ad3922/bw2io-0.9.17.tar.gz", hash = "sha256:1aa66ad9eada0baeee3a0b08a548e84ef79f41248d245deaa8a1ab6ca038a4e6", size = 27605289, upload-time = "2026-04-26T13:36:52.719Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/dc/f2bed6dbbf347e2ff37e44ec0e4b6443a79891c3c68a06b9f536e30884c0/bw2io-0.9.17-py3-none-any.whl", hash = "sha256:974588746b9019de3807d5269107b56ae73b723efdd5184cb9d737133c1ed7d3", size = 27643319, upload-time = "2026-04-26T13:36:48.762Z" },
-]
+sdist = { hash = "sha256:a171961fd6d7fdcd2abbcaf96f2706d1c25e31bf1b7956fe3d18aef5d90adee3" }
 
 [package.optional-dependencies]
 multifunctional = [
     { name = "bw-simapro-csv" },
     { name = "multifunctional" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "build", marker = "extra == 'dev'" },
+    { name = "bw-migrations", specifier = ">=0.2" },
+    { name = "bw-processing", specifier = ">=1.0" },
+    { name = "bw-simapro-csv", marker = "extra == 'multifunctional'", specifier = ">=0.3.2" },
+    { name = "bw2calc", specifier = ">=2.0" },
+    { name = "bw2data", specifier = ">=4.6.2" },
+    { name = "bw2io", marker = "extra == 'multifunctional'" },
+    { name = "bw2io", marker = "extra == 'testing'" },
+    { name = "bw2parameters", specifier = ">=1.1.0" },
+    { name = "lxml" },
+    { name = "mrio-common-metadata" },
+    { name = "multifunctional", marker = "extra == 'multifunctional'", specifier = ">=1.0" },
+    { name = "numpy", specifier = "<3" },
+    { name = "openpyxl" },
+    { name = "pint" },
+    { name = "platformdirs" },
+    { name = "pre-commit", marker = "extra == 'dev'" },
+    { name = "pydantic" },
+    { name = "pyecospold" },
+    { name = "pylint", marker = "extra == 'dev'" },
+    { name = "pytest", marker = "extra == 'dev'" },
+    { name = "pytest", marker = "extra == 'testing'" },
+    { name = "pytest-cov", marker = "extra == 'dev'" },
+    { name = "pytest-cov", marker = "extra == 'testing'" },
+    { name = "pytest-mock", marker = "extra == 'testing'" },
+    { name = "pytest-randomly", marker = "extra == 'dev'" },
+    { name = "python-coveralls", marker = "extra == 'testing'" },
+    { name = "randonneur", specifier = ">=0.6" },
+    { name = "randonneur-data", specifier = ">=0.5.4" },
+    { name = "requests" },
+    { name = "scipy" },
+    { name = "setuptools", marker = "extra == 'dev'" },
+    { name = "sparqlwrapper" },
+    { name = "stats-arrays", specifier = ">=0.6.5" },
+    { name = "tqdm" },
+    { name = "voluptuous" },
+    { name = "xlrd" },
+    { name = "xlsxwriter" },
+]
+provides-extras = ["multifunctional", "testing", "dev"]
 
 [[package]]
 name = "bw2parameters"
@@ -2307,7 +2348,7 @@ requires-dist = [
     { name = "bw2analyzer" },
     { name = "bw2calc" },
     { name = "bw2data" },
-    { name = "bw2io", extras = ["multifunctional"] },
+    { name = "bw2io", extras = ["multifunctional"], url = "https://github.com/mfastudillo/brightway2-io/archive/9f62977cf83ffa45453f410a3bdbc19f38b03811.tar.gz" },
     { name = "ecoinvent-interface", specifier = ">=3.1" },
     { name = "ipykernel" },
     { name = "jupyterlab" },

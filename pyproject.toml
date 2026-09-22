@@ -2,6 +2,9 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project]
 name = "project-name"
 version = "0.1.0"
@@ -13,7 +16,7 @@ dependencies = [
     "bw2analyzer",
     "bw2calc",
     "bw2data",
-    "bw2io[multifunctional]",
+    "bw2io[multifunctional] @ https://github.com/mfastudillo/brightway2-io/archive/9f62977cf83ffa45453f410a3bdbc19f38b03811.tar.gz",
     "ecoinvent-interface>=3.1",
     "ipykernel",
     "jupyterlab",
