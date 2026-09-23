@@ -24,6 +24,7 @@ dependencies = [
     "numpy",
     "openpyxl",
     "pandas",
+    "seaborn>=0.13.2",
 ]
 
 [tool.hatch.build.targets.wheel]
