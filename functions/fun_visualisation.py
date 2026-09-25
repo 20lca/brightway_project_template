@@ -45,7 +45,7 @@ def _fonts() -> tuple[str, str]:
     return title, body
 
 
-def apply_plot_style() -> None:
+def apply_20lca_theme() -> None:
     """Apply 2-0 LCA colours, typography and Matplotlib defaults globally."""
     _, body_font = _fonts()
     rcParams.update(
@@ -145,7 +145,7 @@ def plot_bar(
     show: bool = True,
 ) -> tuple[Figure, Axes]:
     """Create a basic branded bar chart from a DataFrame."""
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     data = df.copy()
 
@@ -187,7 +187,7 @@ def plot_line(
     show: bool = True,
 ) -> tuple[Figure, Axes]:
     """Create a branded line chart for trends or scenario series."""
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     figure, ax = plt.subplots(figsize=figsize)
     sns.lineplot(data=df, x=x, y=y, hue=hue, marker=marker, palette=PALETTE if hue else None, ax=ax)
@@ -213,7 +213,7 @@ def plot_scatter(
     show: bool = True,
 ) -> tuple[Figure, Axes]:
     """Create a branded scatter plot for relationships or sensitivity results."""
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     figure, ax = plt.subplots(figsize=figsize)
     sns.scatterplot(
@@ -256,7 +256,7 @@ def plot_contribution_bar(
     ``name`` and ``score`` and, optionally, ``parent``. Positive and negative
     contributions are retained and sorting is by absolute contribution.
     """
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     data = df.copy()
 
@@ -314,7 +314,7 @@ def plot_stacked(
     Brightway recursive tables with a ``parent`` column are filtered to child
     contributions automatically.
     """
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     if not dfs:
         raise ValueError("plot_stacked requires at least one DataFrame.")
@@ -414,7 +414,7 @@ def plot_pie(
     For contribution analyses containing negative values, prefer ``plot_stacked``
     or ``plot_contribution_bar``.
     """
-    apply_plot_style()
+    apply_20lca_theme()
     _, body_font = _fonts()
     data = df[[label_column, value_column]].dropna().copy()
     data = data[data[value_column] > 0]
@@ -459,7 +459,7 @@ __all__ = [
     "BLUE_GRADIENT",
     "TITLE_FONT",
     "BODY_FONT",
-    "apply_plot_style",
+    "apply_20lca_theme",
     "plot_bar",
     "plot_line",
     "plot_scatter",
