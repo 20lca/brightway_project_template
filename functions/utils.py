@@ -1,6 +1,5 @@
 from pathlib import Path
 class Config:
-
     # Brightway project name
     PROJECT_NAME = "project_name" # define project name here
 
@@ -14,6 +13,16 @@ class Config:
         / "Brightway Open_MA"
         / "data4workshops"
         / "excel_model_example"
+    )
+
+    # Project directory for exports
+    PROJECT_EXPORTS_PATH = (
+        ONEDRIVE_PATH
+        / "Intranet - Internal Development Projects"
+        / "Brightway Open_MA"
+        / "data4workshops"
+        / "excel_model_example"
+        / "exports"
     )
 
     # Ecoinvent settings for web install
