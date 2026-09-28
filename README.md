@@ -1,6 +1,4 @@
 # brightway_project_template
-This is the first draft of a template repository for starting new brightway project. 
-
 The goal of the repository is for the user to be able to use it as a starting point or template for creating new brightway projects.
 
 The user can create a new repository from this template and customise it to their needs.
@@ -12,7 +10,7 @@ With this repository the user is able to import the background database(s) they 
 - BAFU
 
 The user can then:
-- Import their Excel model as a Brightway database
+- Import their Excel foreground model as a Brightway database
 - Analyse activities in databases (for example look at inventories, calculate impacts using all Brightway-available impact assessment methods and carry out a contribution analysis)
 - Export ready-for-report tables of life cycle inventories and results
 - Export a wide selection of ready-for-report figures
