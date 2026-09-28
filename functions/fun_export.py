@@ -4,7 +4,7 @@ Reference: TableGrid headers #6DAACB, white text; body TT Commons Pro,
 9 pt, #353B37; section rows #BFD2D0; thin table rules.
 The style is embedded so exporting does not require the Word template.
 """
-from math import ceil
+from math import ceil, floor, isfinite, log10
 from numbers import Real
 
 import pandas as pd
@@ -26,6 +26,30 @@ def _value(value):
     return value.item() if hasattr(value, "item") else value
 
 
+def _number_format(value):
+    """Show at least six significant digits without scientific notation."""
+    if isinstance(value, int):
+        return "#,##0"
+    decimals = max(2, 5 - floor(log10(abs(value)))) if value and isfinite(value) else 2
+    return "#,##0." + "00" + "#" * min(248, decimals - 2)
+
+
+def _display_text(cell):
+    """Estimate dimensions using the displayed decimal value, including zero."""
+    value = cell.value
+    if value is None:
+        return ""
+    if isinstance(value, Real) and not isinstance(value, bool):
+        decimals = len(cell.number_format.partition(".")[2])
+        text = format(value, f",.{decimals}f")
+        if decimals > 2:
+            text = text.rstrip("0")
+            if len(text.partition(".")[2]) < 2:
+                text += "0" * (2 - len(text.partition(".")[2]))
+        return text
+    return str(value)
+
+
 def _row(ws, values, *, header=False, section=False):
     ws.append([_value(value) for value in values])
     row = ws.max_row
@@ -40,24 +64,35 @@ def _row(ws, values, *, header=False, section=False):
                                    horizontal="right" if isinstance(cell.value, Real) and not isinstance(cell.value, bool) else "left")
         cell.border = Border(bottom=Side(style="thin", color=TEXT))
         if isinstance(cell.value, Real) and not isinstance(cell.value, bool):
-            cell.number_format = "0" if isinstance(cell.value, int) else "0.000E+00"
+            cell.number_format = _number_format(cell.value)
     return row
 
 
 def _finish(ws, *, filter_rows=True):
     ws.sheet_view.showGridLines = False
     ws.freeze_panes = "A2"
+    merged_starts = {(r.min_row, r.min_col): r for r in ws.merged_cells.ranges}
     for column in ws.columns:
-        longest = max(len(str(cell.value or "")) for cell in column)
-        width = min(48, max(14, longest + 3))
-        ws.column_dimensions[column[0].column_letter].width = width
-    for row in ws:
-        lines = max(
-            sum(max(1, ceil(len(line) / max(1, ws.column_dimensions[get_column_letter(c.column)].width - 3)))
-                for line in str(c.value or "").split("\n"))
-            for c in row
+        longest = max(
+            (max(map(len, _display_text(cell).split("\n")))
+             for cell in column if (cell.row, cell.column) not in merged_starts),
+            default=0,
         )
-        ws.row_dimensions[row[0].row].height = max(20, lines * 13 + 6)
+        dimension = ws.column_dimensions[get_column_letter(column[0].column)]
+        dimension.width = min(48, max(6, longest + 2))
+        dimension.bestFit = True
+    for row in ws:
+        lines = 1
+        for cell in row:
+            merged = merged_starts.get((cell.row, cell.column))
+            columns = range(merged.min_col, merged.max_col + 1) if merged else [cell.column]
+            width = sum(ws.column_dimensions[get_column_letter(c)].width for c in columns)
+            lines = max(lines, sum(
+                max(1, ceil(len(line) / max(1, width - 2)))
+                for line in _display_text(cell).split("\n")
+            ))
+        ws.row_dimensions[row[0].row].height = lines * 12 + 3 if any(
+            cell.value is not None for cell in row) else 6
     if filter_rows:
         ws.auto_filter.ref = ws.dimensions
     ws.print_title_rows = "1:1"
@@ -75,10 +110,6 @@ def _table(wb, name, frame):
     _row(ws, list(frame.columns), header=True)
     for values in frame.itertuples(index=False, name=None):
         _row(ws, values)
-    for index, name in enumerate(frame.columns, 1):
-        if str(name).lower() == "fraction":
-            for row in range(2, ws.max_row + 1):
-                ws.cell(row, index).number_format = "0.0%"
     _finish(ws)
     return ws
 
@@ -88,18 +119,21 @@ def export_workflow_excel(path, *, activity_selection, scores, scores_wide,
     """Export existing analysis tables; preserve values and all retained branches.
 
     Contribution overview has green section rows and marked total rows.
-    Contributions data remains flat and filterable, including every raw column.
+    Direct flows and cutoff-only other rows are supplied by the workflow.
+    Contributions data is grouped by studied process, retaining every raw column.
     This exports existing calculations, not a newly calculated LCI.
     """
+    if not contributions.empty and "contribution_type" not in contributions:
+        raise ValueError("Recalculate contributions to separate direct impacts from cutoff omissions.")
     wb = Workbook()
     wb.remove(wb.active)
     _table(wb, "Activities", activity_selection)
     _table(wb, "LCA overview", scores_wide)
     _table(wb, "LCA scores", scores)
     ws = wb.create_sheet("Contribution overview")
-    columns = [c for c in ("name", "location", "amount", "score", "fraction") if c in contributions]
+    columns = [c for c in ("name", "location", "amount", "unit", "score", "fraction") if c in contributions]
     labels = {"name": "Contributor", "location": "Location", "amount": "Amount",
-              "score": "Impact", "fraction": "Share of total"}
+              "unit": "Unit", "score": "Impact", "fraction": "Share of total"}
     _row(ws, ["Row type"] + [labels[c] for c in columns], header=True)
     for (activity, category), group in contributions.groupby(
             ["activity_label", "category_key"], sort=False, dropna=False):
@@ -108,28 +142,39 @@ def export_workflow_excel(path, *, activity_selection, scores, scores_wide,
         row = _row(ws, [f"{activity} | {category} | Impact: {unit} | Reference: 1 {reference}"]
                    + [None] * len(columns), section=True)
         ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=len(columns) + 1)
-        ws.row_dimensions[row].height = 40
         for _, item in group.iterrows():
             root = pd.isna(item["parent"])
-            row = _row(ws, ["Total (do not sum)" if root else "Input"] + [item[c] for c in columns])
+            row = _row(ws, ["Total (do not sum)" if root else item["contribution_type"]] + [item[c] for c in columns])
             if root:
                 for cell in ws[row]:
                     cell.font = Font(name=FONT, size=9, bold=True, color=TEXT)
-            if "fraction" in columns:
-                ws.cell(row, columns.index("fraction") + 2).number_format = "0.0%"
     _finish(ws, filter_rows=False)
-    # Merged section headings span the whole report width.
-    for merged in ws.merged_cells.ranges:
-        ws.row_dimensions[merged.min_row].height = 32
-    ws = _table(wb, "Contributions data", contributions)
+    ws = wb.create_sheet("Contributions data")
+    if contributions.empty:
+        _row(ws, list(contributions.columns), header=True)
+    else:
+        for index, (activity, group) in enumerate(contributions.groupby(
+                "activity_label", sort=False, dropna=False)):
+            if index:
+                ws.append([None] * len(contributions.columns))
+            row = _row(ws, [f"Studied process: {activity}"]
+                       + [None] * (len(contributions.columns) - 1), section=True)
+            ws.merge_cells(start_row=row, start_column=1, end_row=row,
+                           end_column=len(contributions.columns))
+            _row(ws, list(contributions.columns), header=True)
+            for values in group.itertuples(index=False, name=None):
+                _row(ws, values)
+    _finish(ws, filter_rows=False)
+    ws.freeze_panes = "A3" if not contributions.empty else "A2"
+    ws.print_title_rows = "1:2" if not contributions.empty else "1:1"
     _table(wb, "Score checks", score_checks)
     notes = pd.DataFrame({"Notes": [
         "Table style adapted from Report example, AAK.dotx (TableGrid and green section rows).",
         "All results are for one reference-product unit. Impact units are in category labels or method_unit.",
         "Contribution totals and input rows must not be added together.",
-        "Inputs include upstream impacts. Direct emissions and cutoff omissions can prevent inputs summing to the total.",
+        "Inputs include upstream impacts. Direct rows show characterized biosphere flows of the studied process. Other contains only inputs omitted by CUTOFF. Shares are undefined when the total is zero.",
         "Contribution tables retain all branches passing CUTOFF; MAX_CONTRIBUTORS limits figures only.",
-        "Amounts in the raw contribution data follow Brightway's recursive calculation output.",
+        "Input and direct-flow amounts are scaled to one reference-product unit; their units are shown in the unit column.",
         "This workbook exports the existing analysis tables; it does not contain a calculated life-cycle inventory.",
     ]})
     _table(wb, "Read me", notes)

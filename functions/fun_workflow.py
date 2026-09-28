@@ -1,13 +1,13 @@
 """Reusable workflow based on the supplied brightway_template_analysis notebook.
 
 multi_category_score_table retains the scoring function supplied in that archive
-(attributed there to SUPERVAL). Contributions use native bw2analyzer, as in
-03_analysis_and_visualisation. Plotting reuses fun_visualisation.
+(attributed there to SUPERVAL). Contributions use Brightway LCA scores and
+characterized process biosphere flows. Plotting reuses fun_visualisation.
 All calculations are for one reference-product unit.
 """
 import pandas as pd
 import numpy as np
-from bw2analyzer.utils import recursive_calculation_to_object
+from bw2data import get_activity
 from functions.fun_visualisation import plot_contribution_bar
 
 
@@ -38,11 +38,10 @@ def multi_category_score_table(activities: dict, categories) -> pd.DataFrame:
 
 
 def calculate_contributions(activities, categories, *, cutoff=0.005):
-    """Return raw first-tier tables keyed by (activity label, category key).
+    """Return totals, retained first-tier inputs, direct flows, and cutoff remainders.
 
-    Root rows remain in the tables for checks, but are excluded from charts.
-    cutoff is relative to the absolute net root score. Fractions are undefined
-    when the root score is zero; native Brightway behavior is retained.
+    Direct biosphere flows are never filtered. Other contains only inputs omitted
+    by cutoff, relative to the absolute net total. Zero-total shares are undefined.
     """
     validate_selection(activities, categories)
     if not 0 <= cutoff < 1:
@@ -50,15 +49,73 @@ def calculate_contributions(activities, categories, *, cutoff=0.005):
     tables = {}
     for label, activity in activities.items():
         for category, info in categories.items():
-            tables[(label, category)] = recursive_calculation_to_object(
-                activity, lcia_method=info["methods"][0], amount=1,
-                max_level=1, cutoff=cutoff, as_dataframe=True,
-            )
+            lca = activity.lca(info["methods"][0])
+            total = float(lca.score)
+            column = lca.dicts.activity[activity.id]
+            production = list(activity.production())
+            if len(production) > 1:
+                raise ValueError(f"Expected at most one production exchange for {label}.")
+            production_amount = float(lca.technosphere_matrix[
+                lca.dicts.product[production[0].input.id], column
+            ]) if production else 1.0
+            if production_amount == 0:
+                raise ValueError(f"Zero net production for {label}.")
+
+            def row(name, score, kind, branch, *, amount=None, node=None):
+                return {
+                    "label": branch, "parent": None if kind == "Total" else "root",
+                    "score": score, "fraction": score / total if total else None,
+                    "amount": amount, "name": name,
+                    "key": node.key if node is not None else None,
+                    "location": node.get("location") if node is not None else None,
+                    "unit": node.get("unit") if node is not None else None,
+                    "contribution_type": kind,
+                }
+
+            rows = [row(activity.get("name", label), total, "Total", "root",
+                        amount=1.0, node=activity)]
+            # Scale the process column by net production, not total supply:
+            # upstream returns to this process are already in input scores.
+            biosphere = lca.biosphere_matrix[:, column] / production_amount
+            direct = (lca.characterization_matrix @ biosphere).tocoo()
+            direct.sum_duplicates()
+            for flow_index, score in zip(direct.row, direct.data):
+                if score == 0:
+                    continue
+                flow = get_activity(lca.dicts.biosphere.reversed[int(flow_index)])
+                compartments = ", ".join(flow.get("categories", ()))
+                name = flow.get("name", "(Unknown flow)")
+                if compartments:
+                    name += f" ({compartments})"
+                rows.append(row(name, float(score), "Direct", f"direct_{flow_index}",
+                                amount=float(biosphere[flow_index, 0]), node=flow))
+
+            omitted = []
+            for index, exchange in enumerate(activity.technosphere()):
+                if exchange.input.id == exchange.output.id:
+                    continue
+                amount = float(exchange["amount"]) / production_amount
+                lca.redo_lcia({exchange.input.id: amount})
+                score = float(lca.score)
+                if abs(score) <= abs(total * cutoff):
+                    omitted.append(score)
+                else:
+                    rows.append(row(exchange.input.get("name", "(Unknown name)"),
+                                    score, "Input", f"input_{index}",
+                                    amount=amount, node=exchange.input))
+            rows.append(row("other", float(sum(omitted)), "Other", "other"))
+            subtotal = sum(item["score"] for item in rows[1:])
+            if not np.isclose(subtotal, total, rtol=1e-7, atol=1e-12):
+                raise ValueError(
+                    f"Contribution breakdown does not reconcile for {label}, {category}: "
+                    f"total={total}, breakdown={subtotal}. Check production and exchanges."
+                )
+            tables[(label, category)] = pd.DataFrame(rows)
     return tables
 
 
 def combine_contributions(tables, activities, categories):
-    """Combine copies of raw tables with selection metadata."""
+    """Combine copies of contribution tables with selection metadata."""
     parts = [
         table.assign(
             activity_label=label, category_key=category,
