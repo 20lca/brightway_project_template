@@ -1,12 +1,26 @@
 from pathlib import Path
 class Config:
-    # Brightway project name
-    PROJECT_NAME = "project_name" # define project name here
 
-    # Company OneDrive
+    """
+
+    In this first part of the utils.py file the user will need to define:
+    1) The name of their Brightway project
+    2) The path to the OneDrive folder containing the model they want to import
+    3) The path to the OneDrive folder where they want exports to go (e.g. LCI tables and figures)
+    4) The ecoinvent username and password (as well as the ecoinvent version and system model) for importing ecoinvent using the web install (if applicable)
+    5) Database versions and paths for manual install of ecoinvent, as well as BAFU, EXIOBASE and BONSAI (if applicable)
+    
+    The remaining definitions in this file are optional to change and should only be altered if the user needs a different version of a database or if they want to change the colours of figures in the analysis notebooks.
+
+    """
+
+    # This is the Company OneDrive path
     ONEDRIVE_PATH = Path.home() / "OneDrive - 2.-0 LCA Consultants ApS"
 
-    # Project directory
+    # 1) Define your Brightway project name
+    PROJECT_NAME = "project_name"
+
+    # 2) Define the path to the Excel model you want to import
     PROJECT_DIRECTORY_PATH = (
         ONEDRIVE_PATH
         / "Intranet - Internal Development Projects"
@@ -15,7 +29,7 @@ class Config:
         / "excel_model_example"
     )
 
-    # Project directory for exports
+    # 3) Define the path to the folder where you want exports to go
     PROJECT_EXPORTS_PATH = (
         ONEDRIVE_PATH
         / "Intranet - Internal Development Projects"
@@ -25,14 +39,19 @@ class Config:
         / "exports"
     )
 
-    # Ecoinvent settings for web install
+    # 4) Define your ecoinvent username and password (as well as the ecoinvent version and system model) for importing ecoinvent using the web install (if applicable)
     ECOINVENT_USERNAME = "tw20lca" # input your username here
     ECOINVENT_PASSWORD = "20LCAcph" # input your password here
     ECOINVENT_VERSION = "3.12" # input your ecoinvent version here
     ECOINVENT_SYSTEM_MODEL = "consequential"  # input your system model here (can be cutoff / apos / consequential / EN15804)
 
-    # Ecoinvent settings for manual install
-    ECOINVENT_ECOSPOLD_FOLDER_NAME = "ecoinvent 3.12_consequential_ecoSpold02" # define the ecoinvent ecoSpold folder name here
+    """
+    5) Below you can define the database versions and paths for manual install of ecoinvent, as well as BAFU, EXIOBASE and BONSAI (if applicable)
+
+    """
+
+    # ecoinvent settings for manual install
+    ECOINVENT_ECOSPOLD_FOLDER_NAME = "ecoinvent 3.12_consequential_ecoSpold02"
 
     ECOINVENT_ECOSPOLD_PATH = (
         ONEDRIVE_PATH
@@ -121,8 +140,13 @@ class Config:
     BAFU_DATABASE_NAME = "bafu-2026"
     BAFU_BIOSPHERE_NAME = "biosphere3"
 
-    # 2-0 LCA brand identity
+    """
 
+    Below you can change the colours of figures if you need to use something else than the 2-0 LCA brand identity.
+    
+    """
+
+    # 2-0 LCA brand identity
     COLORS = {
         # Core brand colours
         "passion_red": "#F04D46",
