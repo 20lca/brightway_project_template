@@ -114,20 +114,75 @@ def _table(wb, name, frame):
     return ws
 
 
+
+def _inventory_sheet(wb, activities):
+    """Write unfiltered direct exchanges on their stored production basis."""
+    ws = wb.create_sheet("Life Cycle Inventory")
+    _row(ws, ["Exchange", "Unit", "Amount", "Comments"], header=True)
+
+    def band(text):
+        row = _row(ws, [text, None, None, None], section=True)
+        ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=4)
+
+    for index, (label, activity) in enumerate(activities.items()):
+        if index:
+            ws.append([None] * 4)
+            _row(ws, ["Exchange", "Unit", "Amount", "Comments"], header=True)
+        for category, exchanges in (
+                ("Production / reference basis", activity.production()),
+                ("Technosphere", activity.technosphere()),
+                ("Biosphere", activity.biosphere())):
+            exchanges = list(exchanges)
+            if category == 'Biosphere' and not exchanges:
+                continue
+            if category != 'Production / reference basis':
+                band(category)
+            count = 0
+            for exchange in exchanges:
+                node = exchange.input
+                name = node.get("name", "(Unnamed exchange)")
+                if category == "Production / reference basis":
+                    name = node.get("reference product") or name
+                if category == "Biosphere":
+                    compartments = node.get("categories") or ()
+                    if isinstance(compartments, str):
+                        compartments = [compartments]
+                    detail = " / ".join(str(x) for x in compartments)
+                else:
+                    detail = node.get("location", "")
+                if detail:
+                    name += f" ({detail})"
+                _row(ws, [name, exchange.get("unit") or node.get("unit"),
+                          exchange["amount"], exchange.get("comment", "")])
+                count += 1
+            if not count:
+                message = ("No explicit production exchange; no basis inferred"
+                           if category == "Production / reference basis"
+                           else "No exchanges")
+                _row(ws, [message, None, None, None])
+    if not activities:
+        _row(ws, ["No activities supplied", None, None, None])
+    _finish(ws, filter_rows=False)
+    return ws
+
+
 def export_workflow_excel(path, *, activity_selection, scores, scores_wide,
-                          contributions, score_checks):
+                          contributions, score_checks, activities=None):
     """Export existing analysis tables; preserve values and all retained branches.
 
     Contribution overview has green section rows and marked total rows.
     Direct flows and cutoff-only other rows are supplied by the workflow.
     Contributions data is grouped by studied process, retaining every raw column.
-    This exports existing calculations, not a newly calculated LCI.
+    Optional activities supply direct inventories on their stored production basis.
+    This does not calculate an aggregated upstream life-cycle inventory.
     """
     if not contributions.empty and "contribution_type" not in contributions:
         raise ValueError("Recalculate contributions to separate direct impacts from cutoff omissions.")
     wb = Workbook()
     wb.remove(wb.active)
     _table(wb, "Activities", activity_selection)
+    if activities is not None:
+        _inventory_sheet(wb, activities)
     _table(wb, "LCA overview", scores_wide)
     _table(wb, "LCA scores", scores)
     ws = wb.create_sheet("Contribution overview")
@@ -170,12 +225,12 @@ def export_workflow_excel(path, *, activity_selection, scores, scores_wide,
     _table(wb, "Score checks", score_checks)
     notes = pd.DataFrame({"Notes": [
         "Table style adapted from Report example, AAK.dotx (TableGrid and green section rows).",
-        "All results are for one reference-product unit. Impact units are in category labels or method_unit.",
+        "LCIA results and contributions are for one reference-product unit. Impact units are in category labels or method_unit.",
         "Contribution totals and input rows must not be added together.",
         "Inputs include upstream impacts. Direct rows show characterized biosphere flows of the studied process. Other contains only inputs omitted by CUTOFF. Shares are undefined when the total is zero.",
         "Contribution tables retain all branches passing CUTOFF; MAX_CONTRIBUTORS limits figures only.",
         "Input and direct-flow amounts are scaled to one reference-product unit; their units are shown in the unit column.",
-        "This workbook exports the existing analysis tables; it does not contain a calculated life-cycle inventory.",
+        "Life Cycle Inventory, when included, lists direct process exchanges grouped by type. Production exchanges show the stored basis. Amounts and signs are unchanged; zero and negative exchanges are retained without cutoff, normalization or upstream aggregation. Comments come from exchange metadata.",
     ]})
     _table(wb, "Read me", notes)
     wb.save(path)
