@@ -20,9 +20,10 @@ Here is an overview of the repository structure and the notebooks it contains:
 - `.venv/` is the local Python virtual environment created by `uv`.
 - `functions/` contains various functions for importing databases, running analyses and creating visualisations. Set your project names, database names and input paths in `functions/utils.py` (see Step 3). The `fun_*.py` files provide supporting functions used by the notebooks and should not be changed by the user.
 - `project/01_import_background/` contains one notebook per background database: ecoinvent, BAFU, EXIOBASE and BONSAI, plus a notebook for extra biosphere flows and iLUC. These notebooks can be run to import your background databases to Brightway.
-- `project/02_import_foreground.ipynb` can be run to import your Excel model.
-- `project/03_analysis.ipynb` explores databases and activities, calculates impacts and shows contribution results. `project/03_analysis_and_visualisation.ipynb` adds more detailed inventory, contribution and plotting views.
-- `project/04_workflow_template.ipynb` provides a reusable sequence for selecting activities, calculating LCA scores and contributions, and plotting or saving results.
+- `project/02_Tabular_format_importer.ipynb` can be run to import your Excel model.
+- `project/03_SimaProCSV_importer.ipynb` imports a SimaPro CSV model.
+- `project/04_analysis_and_visualisation.ipynb` explores databases and activities, calculates impacts and provides inventory, contribution and plotting views.
+- `project/05_workflow_template.ipynb` provides a reusable sequence for selecting activities, calculating LCA scores and contributions, and plotting or saving results.
 - `pyproject.toml` lists the project dependencies; `uv.lock` records their resolved versions.
 - `.gitignore` list the files in this repository which should not be synced when you push or pull changes.
 
@@ -34,6 +35,7 @@ You need the following:
 - uv for creating a virtual environment.
 - A GitHub account.
 - Git for cloning the repository and pushing changes.
+- The shared Databases folder synced to your computer.
 - Access to the background database files you plan to import, or ecoinvent login credentials if you use its online importer.
 - An Excel foreground model to import, with its location set in `functions/utils.py`.
 
@@ -87,12 +89,14 @@ If you are using VS Code it should remember your selection of interpreter (or ke
 
 ## Step 3: Define the necessary parameters in utils.py
 
-Open `functions/utils.py` and review the `Config` class. You only need to change settings that differ for your project or for the databases you choose to import:
+Open `functions/utils.py`, update the settings in the `Config` class and save your changes. You do not need to run this file separately; the notebooks import its settings. Restart the notebook kernel after changing settings if it has already imported `Config`. You only need to change settings that differ for your project or for the databases you choose to import:
 
-1. **For every project:** Set `PROJECT_NAME` to your Brightway project name. Set `PROJECT_DIRECTORY_PATH` to the folder containing your Excel model and `PROJECT_EXPORTS_PATH` to the folder where you want exports to go. These paths are built from `ONEDRIVE_PATH` in the template; change that base path if your files are elsewhere, or set the individual paths directly.
+1. **For every project:** Set `PROJECT_NAME` to your Brightway project name. Set `PROJECT_DIRECTORY_PATH` to the folder containing your Excel model using `Path(r"your folder here")`. `PROJECT_EXPORTS_PATH` defaults to an `exports` subfolder of your model folder, change it only if you want exports elsewhere.
 2. **If importing ecoinvent online:** Set `ECOINVENT_USERNAME`, `ECOINVENT_PASSWORD`, `ECOINVENT_VERSION` and `ECOINVENT_SYSTEM_MODEL` for the release you have access to.
 3. **If importing ecoinvent from downloaded files:** `ECOINVENT_VERSION`, `ECOINVENT_ECOSPOLD_FOLDER_NAME`, `ECOINVENT_ECOSPOLD_PATH` and `ECOINVENT_BIOSPHERE_PATH` are already configured for ecoinvent 3.12 and its current file locations. Leave them unchanged unless you use a different release.
 4. **For other background databases, only if you use them:** The paths for BAFU (`BAFU_ECOSPOLD_PATH`, `BAFU_MAPPING_FILE_PATH`), EXIOBASE (`EXIOBASE_CSV_PATH`), BONSAI (`BONSAI_PATH`) and iLUC (`EXTRA_BIOSPHERE_PATH`, `ILUC_PATH`) are already configured for the current versions. Leave these paths, and the iLUC workbook and sheet names, unchanged unless you use different versions.
+
+The shared Databases folder is detected automatically by `DATABASES_PATH = find_databases_folder()` to accommodate different sync layouts. All database input paths are built from this folder. If detection fails or several matching folders exist, replace this setting with `DATABASES_PATH = Path(r"your shared Databases folder here")`.
 
 ## Step 4: Install your selected background database(s)
 
@@ -106,12 +110,12 @@ After an import, check the notebook's final database listing to confirm the data
 
 ## Step 5: Import your Excel model
 
-Open `project/02_import_foreground.ipynb`. In the notebook, replace the example Excel filename (`BW_LCI_importer_template.xlsx`) with your model's filename. Check the background database names used in its matching cells and update them to the databases you imported in Step 4.
+Open `project/02_Tabular_format_importer.ipynb`. In the notebook, replace the example Excel filename (`BW_LCI_importer_template.xlsx`) with your model's filename. Check the background database names used in its matching cells and update them to the databases you imported in Step 4.
 
 Run the cells in order. Review the unlinked exchanges shown before the `write_database()` cell, correct any missing or mismatched links, and then write the foreground database. Confirm that it appears in the final database listing.
 
 ## Step 6: Explore your Brightway databases and analyse results
 
-Start with `project/03_analysis.ipynb` to browse databases and activities, inspect inventories, calculate impact scores and explore contributions. Use `project/03_analysis_and_visualisation.ipynb` for more detailed contribution views and plots.
+Use `project/04_analysis_and_visualisation.ipynb` to browse databases and activities, inspect inventories, calculate impact scores, explore contributions and create plots.
 
-For a repeatable analysis of selected activities, use `project/04_workflow_template.ipynb`. Update its activity selections and calculation settings for your model, then run the cells in order. Its optional save step writes tables and figures.
+For a repeatable analysis of selected activities, use `project/05_workflow_template.ipynb`. Update its activity selections and calculation settings for your model, then run the cells in order. Its optional save step writes tables and figures.
